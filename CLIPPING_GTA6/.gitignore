@@ -1,0 +1,17 @@
+# secrets
+.env
+# runtime output / state (stay on the PC)
+log.txt
+log_old.txt
+links.csv
+dry_run_posts.csv
+campaigns.txt
+STOP.txt
+data/
+clips/
+models/
+fonts/
+tools/
+.venv/
+__pycache__/
+*.pyc
