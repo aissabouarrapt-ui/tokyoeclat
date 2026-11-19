@@ -64,6 +64,9 @@ def best_quote(words, onset_rel=24.0):
             continue
         if "-" in text or "..." in text or has_slur(text) or len(set(toks)) < len(toks) - 1:
             continue
+        probs = [w[3] for w in s if len(w) > 3]
+        if probs and (sum(probs) / len(probs) < 0.75 or min(probs) < 0.4):
+            continue  # whisper was guessing: a garbled quote is worse than no quote
         mid = (s[0][0] + s[-1][1]) / 2
         if abs(mid - onset_rel) > 14:
             continue
@@ -105,10 +108,11 @@ def make(meta, streamer, extra_hashtags="#GTA6 #GTAVI", censor_on=True):
             tags.append(t)
     tiktok_tags = tags[:6]
     line2 = f"{name} {_pick(CONTEXT.get(ev, CONTEXT['reaction']), seed + 'x')} 🌴"
-    caption = f"{title}\n\n{line2} {' '.join(mentions)}".rstrip() + "\n\n" + " ".join(tiktok_tags + ["#fyp"])
-
     src = (f"https://www.twitch.tv/{streamer['login']}" if streamer.get("platform") != "kick"
            else f"https://kick.com/{streamer['login']}")
+    live = src.replace("https://www.", "").replace("https://", "")
+    caption = (f"{title}\n\n{line2} {' '.join(mentions)}".rstrip() + f"\n🔴 Live: {live}\n\n"
+               + " ".join(tiktok_tags + ["#fyp"]))
     yt_title = title if len(title) <= 90 else title[:90]
     if "#shorts" not in yt_title.lower() and len(yt_title) <= 91:
         yt_title += " #shorts"

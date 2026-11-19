@@ -1,0 +1,5 @@
+# Tested together on 2026-11-18 (Python 3.12/3.13)
+faster-whisper==1.2.1
+opencv-python-headless>=4.9,<5
+requests>=2.31
+numpy>=1.24

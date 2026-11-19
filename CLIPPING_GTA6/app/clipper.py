@@ -31,6 +31,7 @@ def cmd_run():
     start_stop_watcher()
     t0 = time.time()
     try:
+        housekeeping()
         import heist
         import producer
         import publisher
@@ -60,6 +61,29 @@ def cmd_run():
         return 1
     finally:
         lock.release()
+
+
+def housekeeping():
+    """Leftovers of a run that was killed (STOP.txt, PC shutdown): half-cut clips and
+    heistclips temp folders. Safe: we hold the single-instance lock."""
+    import tempfile
+    import publisher
+    from common import WORK, load_json, save_json
+    shutil.rmtree(WORK, ignore_errors=True)
+    WORK.mkdir(parents=True, exist_ok=True)
+    for d in Path(tempfile.gettempdir()).glob("heistclips-*"):
+        try:
+            if time.time() - d.stat().st_mtime > 3600:
+                shutil.rmtree(d, ignore_errors=True)
+        except OSError:
+            pass
+    hist = load_json(publisher.HISTORY, {"clips": {}, "facecam": {}})
+    stale = [c for c in hist["clips"].values() if c.get("status") == "cutting"]
+    for c in stale:
+        c.update(status="failed", error="interrupted")
+    if stale:
+        save_json(publisher.HISTORY, hist)
+        log.info(f"تنظيف: {len(stale)} قص غير مكتمل من تشغيل سابق (سيُعاد مرة واحدة).")
 
 
 def cmd_campaigns():

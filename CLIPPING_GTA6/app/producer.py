@@ -135,15 +135,21 @@ def produce(cfg, streamers):
             continue
         if title_line:
             log.info(f"  البث: {title_line[:150]}")
-        if cfg.bool("ONLY_GTA_STREAMS") and title_line and not heist.is_gta(title_line):
-            log.info(f"  تخطي: آخر بث لـ {s['name']} ليس GTA (الحملة تدفع على محتوى GTA فقط).")
-            continue
+        if cfg.bool("ONLY_GTA_STREAMS") and title_line:
+            ok, why = heist.gta_check(title_line)
+            if not ok:
+                log.info(f"  تخطي: آخر بث لـ {s['name']} ليس GTA ({why}). الحملة تدفع على محتوى GTA فقط.")
+                continue
         chosen, skipped_music, skipped_dup = [], 0, 0
         for m in moms:
             lvl = (m.get("music_risk") or {}).get("level", "low")
             if cfg.bool("SKIP_MUSIC_WARNING") and lvl in ("medium", "high"):
                 skipped_music += 1
                 log.info(f"  🎵 حذف لحظة {int(m['t_start'])}ث: تحذير موسيقى ({lvl}) - {(m.get('music_risk') or {}).get('why', '')}")
+                continue
+            phrase = str((m.get("phrase") or {}).get("text") or "")
+            if phrase.startswith("!"):
+                log.info(f"  🤖 تخطي لحظة {int(m['t_start'])}ث: الشات كان يكتب أمر بوت ({phrase}) وليس ردة فعل")
                 continue
             if already_done(m, history):
                 skipped_dup += 1

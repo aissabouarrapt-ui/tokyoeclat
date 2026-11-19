@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Small local fix to heistclips (pinned commit 50bb761), applied by setup.
+"""Two small local changes to heistclips (pinned commit 50bb761), applied by setup.
 
 Bug found while testing (YourRAGE's VOD 2931997902): newer Twitch VODs are served
 as fragmented MP4 (#EXT-X-MAP init segment + .mp4 fragments) instead of .ts.
@@ -16,6 +16,12 @@ CLI = Path(__file__).resolve().parent.parent / "tools" / "heistclips" / "cli" / 
 MARK = "/* CLIPPING_GTA6 patch: fmp4 */"
 
 EDITS = [
+    (
+        # 2) also print the stream's game category, so a Fortnite stream titled
+        #    "... GTA GIVEAWAY ..." is not mistaken for GTA content.
+        """  log(`reading chat: ${vod.channel_name} – ${vod.title} (${clock(vod.length)})`);""",
+        """  log(`reading chat: ${vod.channel_name} – ${vod.title} (${clock(vod.length)}) [game: ${vod.game || ""}]`);""",
+    ),
     (
         """  const segs = []; let t = 0, dur = 0;
   for (const ln of lines) {
@@ -59,15 +65,19 @@ def apply(path=CLI):
     if not path.exists():
         return False, "heistclips غير مثبت"
     src = path.read_text(encoding="utf-8")
-    if MARK in src:
-        return True, "الإصلاح مطبق مسبقاً"
-    for old, _ in EDITS:
-        if src.count(old) != 1:
-            return False, "نسخة heistclips مختلفة عن المتوقعة؛ لم يُطبق الإصلاح (القص يعمل لكن بعض الـ VODs الحديثة قد تفشل)"
+    done, missing = 0, 0
     for old, new in EDITS:
-        src = src.replace(old, new)
+        if new in src:
+            done += 1
+        elif src.count(old) == 1:
+            src = src.replace(old, new)
+            done += 1
+        else:
+            missing += 1
     path.write_text(src, encoding="utf-8")
-    return True, "تم تطبيق إصلاح fMP4"
+    if missing:
+        return False, "نسخة heistclips مختلفة عن المتوقعة؛ بعض الإصلاحات لم تُطبق"
+    return True, f"الإصلاحات مطبقة ({done})"
 
 
 if __name__ == "__main__":

@@ -10,29 +10,36 @@
 #  الهاشتاغ الإلزامي للحملة يوضع أولاً في كل وصف (بدونه يُرفض الكليب).
 # ======================================================================
 
-# $5,000 Lauren Hamden GTA 6 Clipping Campaign (✅)
-laurenhamdenn | Lauren Hamden | #LaurenHamden @LaurenHamden | auto | auto
+# ---- مُفعَّل (تم التحقق منها في 19/11/2026: الحساب موجود ويبث GTA 6) — مرتبة حسب ربح الكليب ----
 
-# $12,500 LACY GTA VI Marathon Pool Campaign (✅)
-lacy | LACY | #LACY | auto | auto
+# $12,500 LACY GTA VI Marathon (مسبح) — ~$4.84/كليب مقبول — هاشتاغ إلزامي #LACY — كاميرا يسار أعلى
+lacy | LACY | #LACY | auto | en
 
-# $5,000 Clix GTA VI Marathon Pool Campaign (✅)
-clix | Clix | #Clix | auto | auto
+# $5,000 Clix GTA VI Marathon (مسبح) — ~$2.17/كليب مقبول — هاشتاغ إلزامي #Clix
+clix | Clix | #Clix | auto | en
 
-# Lysium/Benji Ramos Clips (⚠️)
-# lysium | Lysium |  | auto | auto
+# KreekCraft GTA 6 — $1/1000 مشاهدة، حد $400/كليب (القواعد: يجب أن يظهر overlay البث)
+kreekcraft | KreekCraft |  | auto | en
 
-# BOBBY VAN RIPER Clipping (✅)
-bobby_vanriper | BOBBY VAN RIPER |  | auto | auto
+# Kai Cenat $10,000 GTA 6 Pool (مسبح)
+kaicenat | Kai Cenat |  | auto | en
 
-# Dasgasd3m x RUCKUS | GTA 6 (⚠️)
-# dasgasd3m | Dasgasd3m |  | auto | auto
+# ---- مُعطَّل (احذف # لتفعيله عندما يتحقق الشرط) ----
 
-# GATTOUZ × GTA VI × 1WIN (⚠️)
-# kick.com/gattouz | GATTOUZ |  | auto | auto
+# YourRAGE $5,000 GTA 6 Pool — آخر بث له (19/11) لعبة مواعدة "Prepping For GTA 6": فعّله عند بدء ماراثون GTA 6
+# yourragegaming | YourRAGE |  | auto | en
 
-# Kai Cenat - $10,000 GTA 6 Pool Campaign (✅)
-kaicenat | Kai Cenat |  | auto | auto
+# $5,000 Lauren Hamden — $1.5/1000، حد $250 — يشترط حساباً مخصصاً لها فقط + رابط lozzahamden.click في البايو
+# laurenhamdenn | Lauren Hamden | #LaurenHamden @LaurenHamden | auto | en
 
-# YourRAGE $5,000 GTA 6 Pool Campaign (✅)
-yourragegaming | YourRAGE |  | auto | auto
+# BOBBY VAN RIPER — بثه الأخير Fortnite وheistclips لم يجد VOD متاحاً (فعّله حين يبث GTA)
+# bobby_vanriper | Bobby Van Riper |  | auto | en
+
+# Lysium/Benji Ramos — يتطلب موافقة مسبقة على كل كليب: لا يناسب النشر الآلي
+# lysium | Lysium |  | auto | en
+
+# Dasgasd3m x RUCKUS — تبدأ 19/11؛ اسم Twitch مُخمَّن، تحقق منه أولاً
+# dasgasd3m | Dom |  | auto | en
+
+# GATTOUZ × 1WIN — Kick، لا تدفع على YouTube، راعي مراهنات (خطر على حساب TikTok)
+# kick.com/gattouz | Gattouz |  | auto | fr

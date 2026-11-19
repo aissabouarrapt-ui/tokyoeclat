@@ -71,8 +71,25 @@ def campaigns_text(filter_="gta", n=50):
     return out
 
 
-def is_gta(title_line):
-    return bool(GTA_RE.search(title_line or ""))
+# Seen 19/11/2026: "Prepping For GTA 6 + Finishing 5 Huzz" was a dating game, not GTA.
+PRE_GTA_RE = re.compile(r"prep+ing for|getting ready for|waiting for|before (gta|grand)|count ?down|until (gta|grand)", re.I)
+NEUTRAL_GAMES = {"", "just chatting", "irl", "travel & outdoors", "special events", "none", "null", "undefined"}
+
+
+def gta_check(title_line):
+    """-> (is GTA?, reason). Trusts the stream's game category; the title is only used when
+    the category is neutral (Just Chatting / IRL: many marathons start there)."""
+    m = re.search(r"\[game: ([^\]]*)\]\s*$", title_line or "")
+    game = (m.group(1).strip() if m else "")
+    if GTA_RE.search(game):
+        return True, f"الفئة: {game}"
+    if game.lower() not in NEUTRAL_GAMES:
+        return False, f"الفئة: {game} (ليست GTA)"
+    if PRE_GTA_RE.search(title_line or ""):
+        return False, "العنوان يقول إن GTA لم يبدأ بعد (prepping/waiting/countdown)"
+    if GTA_RE.search(title_line or ""):
+        return True, "العنوان يذكر GTA"
+    return False, "لا الفئة ولا العنوان GTA"
 
 
 def log_version():

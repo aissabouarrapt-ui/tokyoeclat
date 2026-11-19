@@ -91,7 +91,7 @@ def load_audio(video):
 
 
 def transcribe(video, model_name="small", language=None):
-    """-> (words [(start, end, text)], detected_language, full_text)"""
+    """-> (words [(start, end, text, probability)], detected_language, full_text)"""
     m = load_model(model_name)
     audio = load_audio(video)
     segments, info = m.transcribe(
@@ -106,7 +106,7 @@ def transcribe(video, model_name="small", language=None):
         for w in (s.words or []):
             t = w.word.strip()
             if t:
-                words.append((float(w.start), float(w.end), t))
+                words.append((float(w.start), float(w.end), t, round(float(w.probability), 3)))
     return words, info.language, " ".join(texts).strip()
 
 
@@ -210,7 +210,7 @@ def render(raw, ass_file, out, fontsdir=FONTS):
     args = ["ffmpeg", "-y", "-v", "error", "-i", rel(raw)]
     if vf:
         args += ["-vf", ",".join(vf)]
-    args += ["-c:v", "libx264", "-preset", "medium", "-crf", "21", "-maxrate", "9M", "-bufsize", "18M",
+    args += ["-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-maxrate", "9M", "-bufsize", "18M",
              "-pix_fmt", "yuv420p", "-r", "30",
              "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-c:a", "aac", "-b:a", "160k", "-ar", "48000",
              "-map_metadata", "-1", "-movflags", "+faststart", rel(out)]

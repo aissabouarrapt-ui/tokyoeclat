@@ -51,6 +51,8 @@ def handles(c):
     yt = re.findall(r"youtube\.com/@([\w.-]+)", d)
     if out:
         return out, yt
+    if re.search(r"live on youtube|youtube live|youtube livestream|streams? .{0,30}on youtube", d, re.I):
+        return [], yt or ["(YouTube Live)"]
     name = title_name(c["title"])
     cats = {x.lower() for x in c.get("categories") or []}
     looks_streamer = bool(cats & {"streamer", "personal brand", "content creator"}) or bool(
@@ -118,6 +120,8 @@ def verdict(c, hs, yt, rules=None):
         notes.append(f"لا تدفع على {', '.join(missing)}")
     if re.search(r"scheduled for|submissions begin only", text, re.I):
         notes.append("لم تبدأ بعد (اقرأ الموعد)")
+    if rules and rules.get("dedicated"):
+        notes.append("تتطلب حساباً مخصصاً لهذا الستريمر فقط (فعّله فقط إذا كان لك حساب باسمه)")
     if re.search(r"1win|casino|bet\b|betting", text, re.I):
         notes.append("راعي مراهنات: خطر حظر على TikTok")
     return ("⚠️" if notes else "✅"), ("; ".join(notes) or "مناسبة للنظام الآلي")
@@ -145,6 +149,17 @@ def report():
             if rules:
                 rules["url"] = u
                 break
+        brief_tags = []
+        for sent in re.split(r"(?<=[.!])\s", c.get("description") or ""):
+            if re.search(r"caption|hashtag|include|\buse\b|\btag\b", sent, re.I):
+                brief_tags += re.findall(r"#[A-Za-z][A-Za-z0-9_]+", sent) + re.findall(r"@[A-Za-z0-9_.]+[A-Za-z0-9_]", sent)
+        if brief_tags:
+            rules = rules or {"hashtags": [], "mentions": [], "mvr": None, "platforms": None, "dedicated": False,
+                              "url": "نص الحملة"}
+            for t in brief_tags:
+                key = "hashtags" if t.startswith("#") else "mentions"
+                if t not in rules[key]:
+                    rules[key].append(t)
         v, why = verdict(c, hs, yt, rules)
         per = (f"${c['expected_per_clip']:.2f}/كليب مقبول" if c.get("expected_per_clip") is not None
                else "جديدة (لا سجل بعد)")
@@ -175,7 +190,9 @@ def report():
                          f"{' | حساب مخصص للستريمر إلزامي' if rules['dedicated'] else ''}")
         lines.append(f"   الصفحة: {c['url']}")
         if v in ("✅", "⚠️") and hs:
-            p, h, _ = hs[0]
+            p, h, how = hs[0]
+            if how != "من الرابط" and (p, h) not in live:
+                v = "⚠️ اسم مُخمَّن من العنوان، تأكد منه"
             name = title_name(c["title"]) or h
             tags = " ".join((rules or {}).get("hashtags", []) + (rules or {}).get("mentions", []))
             suggestions.append((p, h, name, tags, c["title"], v))
